@@ -16,6 +16,7 @@ FLASK_PORT = 5012
 FLASK_SERVER = '0.0.0.0'
 PASTA_XML = './'
 log_name = 'app.log'
+arquivos = []
 app = Flask(__name__)
 
 
@@ -44,10 +45,14 @@ class ArquivoXml:
             self.xml_file = xml
             self.NF = str(nota.infNFe.ide.nNF)
             self.serie = str(nota.infNFe.ide.serie)
-            self.data_emissao = str(nota.infNFe.ide.dhEmi).replace('T', '')
+            self.data_emissao = str(nota.infNFe.ide.dhEmi)[:10]
             self.operacao = str(nota.infNFe.ide.natOp).upper()
             self.razao_social = str(nota.infNFe.emit.xNome).upper()
-            self.CNPJ_CPF = f'{nota.infNFe.emit.CNPJ}{nota.infNFe.emit.CPF}'
+            if nota.infNFe.emit.CPF is not None:
+                self.cnpj_cpf = str(nota.infNFe.emit.CPF)
+            else:
+                self.cnpj_cpf = str(nota.infNFe.emit.CNPJ)
+
             self.total = str(nota.infNFe.total.ICMSTot.vNF)
             self.chave = str(nota.infNFe.Id[3:])
 
@@ -57,6 +62,7 @@ class ArquivoXml:
 
 def montar_lista_xmls():
     xml_files = glob.glob(f'{PASTA_XML}/**/*.xml', recursive=True)
+    global arquivos
     arquivos = []
 
     try:
@@ -130,7 +136,7 @@ def ler_config():
 
 @app.route('/')
 def main():
-    return render_template('main.html')
+    return render_template('main.html', arquivos=arquivos)
 
 
 if __name__ == "__main__":

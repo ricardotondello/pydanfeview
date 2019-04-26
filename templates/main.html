@@ -2,8 +2,8 @@
 <html>
 
 <head>
-  <title>SIT - Service Monitor</title>
-  <link rel="icon" type="image/png" href="static/images/monitor.png" />
+  <title>PyDanfeView - Ricardo Tondello</title>
+  <link rel="icon" type="image/png" href="static/images/xml.png" />
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
@@ -21,265 +21,71 @@
 
 <body class="grey lighten-5">
 
-
   <script>
-    var clientes_filtrados;
-    function startTimer(duration, display) {
-      var timer = duration, minutes, seconds;
-      setInterval(function () {
-        minutes = parseInt(timer / 60, 10)
-        seconds = parseInt(timer % 60, 10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        display.textContent = minutes + ":" + seconds;
-
-        if (--timer < 0) {
-          timer = duration;
-          //window.location.reload(true);
-          esta_carregando();
-          verificaServicos();
-        }
-      }, 1000);
-    }
-
-    window.onload = function () {
-      var resultado = getCookie("clock_timer");
-      if (resultado == null) {
-        resultado = 5;
-        setCookie("clock_timer", resultado);
-      }
-      esta_carregando();
-      var minutes = 60 * resultado,
-        display = document.querySelector('#time');
-      startTimer(minutes, display);
-    };
-
-    $(document).ready(function () {
-      $('select').material_select();
-    });
-
-    $(function () {
-      $('#searchCliente').change(function () {
-        esta_carregando();
-      });
-    });
-
-    $(function () {
-      $('#searchStatus').change(function () {
-        esta_carregando();
-      });
-    });
-
-    function montar_filtro() {
-      //remove o preloader
-      $('#preloader').remove();
-
-      filtrar();
-
-    }
-
-    function filtrar() {
-
-      $(function () {
-
-        $.ajax('get_servicos', {
-          type: 'POST',
-          data: "",
-          contentType: 'application/json',
-          success: function (data, textStatus, jqXHR) {
-            clientes_filtrados = [];
-            data.result_clientes.clientes.forEach(function (cli, index) {
-              var clientes = JSON.parse(cli);
-
-              clientes_filtrados.push(clientes);
-            });
-
-            $('#myReport').html(data.rendered_template);
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
-            console.log(errorThrown);
-          }
-        });
-      });
-    }
-
-    function esta_carregando() {
-      $(function () {
-
-        $.ajax('filter_ready', {
-          type: 'POST',
-          data: "",
-          contentType: 'application/json',
-          success: function (data, textStatus, jqXHR) {
-            if (!data){
-              montar_filtro();
-            } else {
-              document.getElementById("myCollapsible").innerHTML = "";
-              setTimeout(function(){ window.location.reload(true); }, 5000);
-            }
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
-            console.log(errorThrown);
-            return True;
-          }
-        });
-      });
-    }
-
-    function verificaServicos() {
-
-      for (var cli in clientes_filtrados) {
-        var clientes = clientes_filtrados[cli];
-
-        clientes.servicos.forEach(function (ser, index) {
-          if (ser.codigo_status == 0) {
-            var message = 'O serviço (' + ser.codigo_servico + ' - ' + ser.nome_servico + ')(' + clientes.cliente + ') esta parado!'
-            notifyMe(message);
-          }
-        });
-      }
-      var tempo = getCookie("clock_timer");
-      setTimeout("verificaServicos()", tempo * 1000 * 60);
-    }
-
-
-    Notification.requestPermission().then(function (result) {
-      console.log(result);
-    });
-
-    function askPermission() {
-      // Let's check if the browser supports notifications
-      if (!("Notification" in window)) {
-        alert("This browser does not support system notifications");
-        return False;
-      }
-
-      // Let's check whether notification permissions have already been granted
-      else if (Notification.permission === "granted") {
-        // If it's okay let's create a notification
-        return True;
-      }
-
-      // Otherwise, we need to ask the user for permission
-      else if (Notification.permission !== 'denied') {
-        Notification.requestPermission(function (permission) {
-          // If the user accepts, let's create a notification
-          return (permission === "granted");
-        });
-      }
-    }
-
-    function notifyMe(psMessage) {
-      if (askPermission) {
-        var img = 'static/images/warning.png';
-        var notification = new Notification('SIT Monitor necessita sua atenção', { body: psMessage, icon: img });
-        window.navigator.vibrate(500);
-      }
-    }
-
-    function changeClock() {
-      toggle_visibility('clockTimeClock');
-
-      var e = document.getElementById('clockTimeInput');
-      if (!(e.hidden)) {
-        var valor = document.getElementById('clockTime').value;
-        if (valor == "") {
-          valor = 5;
-        }
-        setCookie("clock_timer", valor);
-        window.location.reload(true);
-      }
-
-      toggle_visibility('clockTimeInput');
-    }
-    function toggle_visibility(id) {
-      var e = document.getElementById(id);
-      if (e.hidden)
-        e.hidden = '';
-      else
-        e.hidden = 'hidden';
-    }
-
-    function getCookie(k) {
-      var c = String(document.cookie).split(";");
-      var neq = k + "=";
-
-      for (var i = 0; i < c.length; i++) {
-        var d = c[i];
-
-        while (d.charAt(0) === " ") {
-          c[i] = c[i].substring(1, d.length);
-        }
-
-        if (c[i].indexOf(neq) === 0) {
-          return decodeURIComponent(c[i].substring(neq.length, c[i].length));
-        }
-      }
-
-      return null;
-    }
-
-    function setCookie(k, v, expira, path) {
-      path = path || "/";
-
-      var d = new Date();
-      d.setTime(d.getTime() + (expira * 1000));
-
-      document.cookie = encodeURIComponent(k) + "=" + encodeURIComponent(v) + "; expires=" + d.toUTCString() + "; path=" + path;
-    }
-
 
   </script> {% block body %}
+  <style>
+    table {
+      width : 100%;
+      font-size: 12px;
+    }
+  </style>
 
   <nav>
     <div class="nav-wrapper">
-      <a href="#!" class="brand-logo"><i class="material-icons">cloud</i>SIT - Monitoramento de serviços</a>
-      <ul class="right hide-on-med-and-down">
-
-        <li><a href="#!" onclick="changeClock()"><i class="material-icons">av_timer</i></a></li>
-        <li>
-          <div class="col s2" id="clockTimeClock">
-            <h4><span id="time">--:--</span></h4>
-          </div>
-          <div class="input-field col s2" hidden="" id="clockTimeInput">
-            <input placeholder="Tempo (mim)" id="clockTime" type="number" class="validate" min="1" max="60">
-            <label for="clockTime">Tempo</label>
-          </div>
-        </li>
-
-        <li><a href="#!"><i class="material-icons">account_circle</i></a></li>
-      </ul>
+      <a href="#!" class="brand-logo"><i class="material-icons">desktop_mac</i>PyDanfeView</a>
     </div>
   </nav>
 
-  <!-- Relatório-->
-  <div class="row" id="myReport">
-    {% include "report.html" %}
-  </div>
-
+  <!--
   <div class="container">
     <div class="progress" id="preloader">
       <div class="indeterminate"></div>
   </div>
   </div>
+  -->
+      <div class="container">
+       <div class="row">
+          <table class="table table-sm table-bordered responsive-table highlight" >
+            <thead>
+              <tr>
+                <th scope="col">NF</th>
+                <th scope="col">Série</th>
+                <th scope="col">Data Emissão</th>
+                <th scope="col">Operação</th>
+                <th scope="col">Razão Social</th>
+                <th scope="col">CNPJ/CPF</th>
+                <th scope="col">Total R$</th>
+                <th scope="col">Chave</th>
+                <th scope="col" style="display:none;">XML</th>
+                <th scope="col">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="myTableBody">
+              <!-- arquivos -->
+              {% for arquivo in arquivos %}
+              <tr>
+                <td>{{ arquivo.NF }}</td>
+                <td>{{ arquivo.serie }}</td>
+                <td>{{ arquivo.data_emissao }}</td>
+                <td>{{ arquivo.operacao }}</td>
+                <td>{{ arquivo.razao_social }}</td>
+                <td>{{ arquivo.cnpj_cpf }}</td>
+                <td>{{ arquivo.total }}</td>
+                <td>{{ arquivo.chave }}</td>
+                <td style="display:none;">{{ arquivo.xml_file }}</td>
+                <td> <a href="#!" class="brand-logo"><i class="material-icons">pageview</i>Visualizar</a> </td>
+              </tr>
+              {% endfor %}
+              <!-- fim arquivos -->
 
-  <div class="container">
-    <div class="row" id="alertas">
-      {% if (clientes_off|count > 0) %}
-      <i class="small material-icons yellow">warning</i> Clientes que apresentaram falha na conexão com o EndPoint.
-      {% for ofs in clientes_off %}
-      <div class="row">
-        {{ofs.cliente}} - (Exception: {{ofs.ret_status}})
-      </div>
-      {% endfor %}
-      {% endif %}
-    </div>
-  </div>
+            </tbody>
+          </table>
+        </div>
+        </div>
 
   <blockquote>
-    <footer>Ricardo Tondello. Equipe MP - Softplan - 2018</footer>
+    <footer>Direitos reservados - Ricardo Tondello - 2019</footer>
   </blockquote>
 
   {% endblock %}

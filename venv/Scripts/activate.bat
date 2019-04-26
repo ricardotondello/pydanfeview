@@ -1,5 +1,5 @@
 @echo off
-set "VIRTUAL_ENV=D:\dsv\GIT\mydanfeview\venv"
+set "VIRTUAL_ENV=D:\dsv\GIT\pydanfeview\venv"
 
 if defined _OLD_VIRTUAL_PROMPT (
     set "PROMPT=%_OLD_VIRTUAL_PROMPT%"
