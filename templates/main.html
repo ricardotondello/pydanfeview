@@ -19,11 +19,17 @@
 
 </head>
 
+<script>
+  function myFunction() {
+    const filter = document.querySelector('#myInput').value.toUpperCase();
+    const trs = document.querySelectorAll('#myTable tr:not(.header)');
+    trs.forEach(tr => tr.style.display = [...tr.children].find(td => td.innerHTML.toUpperCase().includes(filter)) ? '' : 'none');
+  }
+</script>
+
 <body class="grey lighten-5">
 
-  <script>
-
-  </script> {% block body %}
+  {% block body %}
   <style>
     table {
       width: 100%;
@@ -55,9 +61,12 @@
   -->
   <div class="container">
     <div class="row">
-      <table class="table table-sm table-bordered responsive-table highlight">
+      <table id="myTable" class="table table-sm table-bordered responsive-table highlight">
         <thead>
           <tr>
+            <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Pesquisa">
+          </tr>
+          <tr class="header">
             <th scope="col">NF</th>
             <th scope="col">Série</th>
             <th scope="col">Data Emissão</th>
