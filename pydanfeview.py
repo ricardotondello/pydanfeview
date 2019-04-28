@@ -2,6 +2,7 @@
 import json
 import logging
 import os
+import io
 import threading
 import time
 import requests
@@ -33,11 +34,10 @@ class ArquivoXml:
         self.chave = ''
         self.xml_valido = False
 
-
     def load_data_from_xml(self, xml):
         try:
             # vamos importar o XML da nota e transforma-lo em objeto Python:
-            nota = parser.parse(xml)
+            nota = parser.parse(xml, silence=True)
             self.xml_valido = nota.infNFe is not None
             if not self.xml_valido:
                 return
@@ -55,6 +55,7 @@ class ArquivoXml:
 
             self.total = str(nota.infNFe.total.ICMSTot.vNF)
             self.chave = str(nota.infNFe.Id[3:])
+            parser.export(nota, stream=self.xm)
 
         except Exception as e:
             logger.error(f'Erro ao ler arquivo xml ({xml}): {e}')
@@ -88,6 +89,7 @@ def activate_job():
         while True:
             logger.info("buscando xmls...")
             montar_lista_xmls()
+            logger.info("fim da busca por xmls...")
             time.sleep(3600)
 
     thread_xml = threading.Thread(target=run_job_xml)
@@ -137,6 +139,16 @@ def ler_config():
 @app.route('/')
 def main():
     return render_template('main.html', arquivos=arquivos)
+
+
+@app.route('/danfeview/<path:xml_file>')
+def danfe_view(xml_file):
+    print(xml_file)
+    stream_xml = io.StringIO("some initial text data")
+    nota = parser.parse(xml_file, silence=True)
+    parser.export(nota, stream=stream_xml)
+    dados_do_xml = stream_xml.getvalue()
+    return render_template('danfe.html', dados_do_xml=dados_do_xml)
 
 
 if __name__ == "__main__":

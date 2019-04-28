@@ -1,0 +1,23 @@
+<html>
+
+<head>
+    <title>PyDanfeView - Ricardo Tondello</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+
+<body>
+
+    <form action="http://www.webdanfe.com.br/danfe/GeraDanfe.php" name="one" enctype="multipart/form-data"
+        method="post">
+        <input type="submit" value="enviar">
+
+        <textarea name="arquivoXml" cols="150" rows="50" style="visibility:hidden">
+        {{dados_do_xml}}
+        </textarea>
+    </form>
+    <script>
+        document.one.submit();
+    </script>
+</body>
+
+</html>
