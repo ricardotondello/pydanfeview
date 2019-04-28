@@ -17,6 +17,10 @@
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script type="text/javascript" src="static/js/materialize.min.js"></script>
 
+  <!-- pagination -->
+  <script src="//code.jquery.com/jquery.min.js"></script>
+  <script src="static/js/pagination.js"></script>
+
 </head>
 
 <script>
@@ -25,6 +29,18 @@
     const trs = document.querySelectorAll('#myTable tr:not(.header)');
     trs.forEach(tr => tr.style.display = [...tr.children].find(td => td.innerHTML.toUpperCase().includes(filter)) ? '' : 'none');
   }
+
+  $(document).ready(function () {
+    $('#myTableBody').pageMe({
+      pagerSelector: '#myPager',
+      activeColor: 'blue',
+      prevText: 'Anterior',
+      nextText: 'Próximo',
+      showPrevNext: true,
+      hidePageNumbers: false,
+      perPage: 15
+    });
+  }); 
 </script>
 
 <body class="grey lighten-5">
@@ -52,20 +68,16 @@
     </div>
   </nav>
 
-  <!--
-  <div class="container">
-    <div class="progress" id="preloader">
-      <div class="indeterminate"></div>
-  </div>
-  </div>
-  -->
   <div class="container">
     <div class="row">
-      <table id="myTable" class="table table-sm table-bordered responsive-table highlight">
+      <div class="input-field">
+        <i class="material-icons prefix">search</i>
+        <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Pesquisar">
+      </div>
+    </div>
+    <div class="row">
+      <table id="myTable" class="table table-sm table-bordered centered responsive-table highlight">
         <thead>
-          <tr>
-            <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Pesquisa">
-          </tr>
           <tr class="header">
             <th scope="col">NF</th>
             <th scope="col">Série</th>
@@ -74,9 +86,8 @@
             <th scope="col">Razão Social</th>
             <th scope="col">CNPJ/CPF</th>
             <th scope="col">Total R$</th>
-            <th scope="col">Chave</th>
-            <th scope="col" style="display:none;">XML</th>
-            <th scope="col">Ação</th>
+            <th scope="col">Chave de Acesso</th>
+            <th scope="col">Visualizar Danfe</th>
           </tr>
         </thead>
         <tbody id="myTableBody">
@@ -91,15 +102,18 @@
             <td>{{ arquivo.cnpj_cpf }}</td>
             <td>{{ arquivo.total }}</td>
             <td>{{ arquivo.chave }}</td>
-            <td style="display:none;">{{ arquivo.xml_file }}</td>
             <td> <a href="danfeview/{{ arquivo.xml_file }}" target="_blank" class="brand-logo"><i
-                  class="material-icons">pageview</i>Visualizar</a> </td>
+                  class="material-icons">description</i> </a> </td>
           </tr>
           {% endfor %}
           <!-- fim arquivos -->
 
         </tbody>
       </table>
+      <div class="col-md-12 center text-center">
+        <span class="left" id="total_reg"></span>
+        <ul class="pagination pager" id="myPager"></ul>
+      </div>
     </div>
   </div>
 
