@@ -40,7 +40,24 @@
       hidePageNumbers: false,
       perPage: 15
     });
-  }); 
+  });
+
+  function CopyTextToClipboard(element, text) {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+    element.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      var successful = document.execCommand('copy');
+      var msg = successful ? 'successful' : 'unsuccessful';
+      //console.log('Fallback: Copying text command was ' + msg);
+    } catch (err) {
+      //console.error('Fallback: Oops, unable to copy', err);
+    }
+    element.removeChild(textArea);
+  }
+
 </script>
 
 <body class="grey lighten-5">
@@ -59,6 +76,10 @@
     footer {
       font-size: 10px;
       font-style: italic;
+    }
+
+    span.badge {
+      float: none;
     }
   </style>
 
@@ -101,7 +122,15 @@
             <td>{{ arquivo.razao_social }}</td>
             <td>{{ arquivo.cnpj_cpf }}</td>
             <td>{{ arquivo.total }}</td>
-            <td>{{ arquivo.chave }}</td>
+            <td>
+              <span class="badge">
+
+                <a href="#!" onclick="CopyTextToClipboard(this, '{{ arquivo.chave }}')">
+                  <i class="tiny material-icons" title="Copia a chave de acesso">content_copy</i>
+                </a>
+
+              </span>
+            </td>
             <td> <a href="danfeview/{{ arquivo.xml_file }}" target="_blank" class="brand-logo"><i
                   class="material-icons">description</i> </a> </td>
           </tr>

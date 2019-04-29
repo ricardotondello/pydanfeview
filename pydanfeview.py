@@ -51,7 +51,8 @@ class ArquivoXml:
             if nota.infNFe.emit.CPF is not None:
                 self.cnpj_cpf = str(nota.infNFe.emit.CPF)
             else:
-                self.cnpj_cpf = str(nota.infNFe.emit.CNPJ)
+                cnpj = str(nota.infNFe.emit.CNPJ)
+                self.cnpj_cpf = "%s.%s.%s/%s-%s" % ( cnpj[0:2], cnpj[2:5], cnpj[5:8], cnpj[8:12], cnpj[12:14] )
 
             self.total = str(nota.infNFe.total.ICMSTot.vNF)
             self.chave = str(nota.infNFe.Id[3:])
