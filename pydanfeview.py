@@ -7,6 +7,7 @@ import threading
 import time
 import requests
 import glob
+import webbrowser
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify
 from logging.handlers import RotatingFileHandler
@@ -95,6 +96,8 @@ def activate_job():
 
     thread_xml = threading.Thread(target=run_job_xml)
     thread_xml.start()
+    
+    webbrowser.open_new_tab(f'http://127.0.0.1:{FLASK_PORT}')
 
 
 def start_runner():
@@ -133,8 +136,8 @@ def ler_config():
 
     config = json.load(open(path))
     FLASK_PORT = int(config.get('FLASK_PORT', 5012))
-    FLASK_SERVER = int(config.get('FLASK_SERVER', '0.0.0.0'))
-    PASTA_XML = int(config.get('PASTA_XML', './'))
+    FLASK_SERVER = str(config.get('FLASK_SERVER', '0.0.0.0'))
+    PASTA_XML = str(config.get('PASTA_XML', './'))
 
 
 @app.route('/')
