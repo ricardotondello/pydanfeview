@@ -40,7 +40,9 @@ class ArquivoXml:
             # vamos importar o XML da nota e transforma-lo em objeto Python:
             nota = parser.parse(xml, silence=True)
             self.xml_valido = nota.infNFe is not None
+
             if not self.xml_valido:
+                logger.error(f'Xml ({xml}) não contem tag: infNFe')
                 return
 
             self.xml_file = xml
@@ -48,16 +50,16 @@ class ArquivoXml:
             self.serie = str(nota.infNFe.ide.serie)
             self.data_emissao = str(nota.infNFe.ide.dhEmi)[:10]
             self.operacao = str(nota.infNFe.ide.natOp).upper()
-            self.razao_social = str(nota.infNFe.emit.xNome).upper()
-            if nota.infNFe.emit.CPF is not None:
-                self.cnpj_cpf = str(nota.infNFe.emit.CPF)
+            self.razao_social = str(nota.infNFe.dest.xNome).upper()
+            if nota.infNFe.dest.CPF is not None:
+                self.cnpj_cpf = str(nota.infNFe.dest.CPF)
             else:
-                cnpj = str(nota.infNFe.emit.CNPJ)
+                cnpj = str(nota.infNFe.dest.CNPJ)
                 self.cnpj_cpf = "%s.%s.%s/%s-%s" % ( cnpj[0:2], cnpj[2:5], cnpj[5:8], cnpj[8:12], cnpj[12:14] )
 
             self.total = str(nota.infNFe.total.ICMSTot.vNF)
             self.chave = str(nota.infNFe.Id[3:])
-            parser.export(nota, stream=self.xm)
+            #parser.export(nota, stream=self.xml)
 
         except Exception as e:
             logger.error(f'Erro ao ler arquivo xml ({xml}): {e}')
@@ -65,6 +67,7 @@ class ArquivoXml:
 
 def montar_lista_xmls():
     xml_files = glob.glob(f'{PASTA_XML}/**/*.xml', recursive=True)
+    logger.info(f'Encontrados {len(xml_files)} arquivos xml.')
     global arquivos
     arquivos = []
 
