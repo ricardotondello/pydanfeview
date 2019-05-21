@@ -34,6 +34,7 @@ class ArquivoXml:
         self.total = ''
         self.chave = ''
         self.xml_valido = False
+        self.tpNF = ''
 
     def load_data_from_xml(self, xml):
         try:
@@ -50,16 +51,33 @@ class ArquivoXml:
             self.serie = str(nota.infNFe.ide.serie)
             self.data_emissao = str(nota.infNFe.ide.dhEmi)[:10]
             self.operacao = str(nota.infNFe.ide.natOp).upper()
-            self.razao_social = str(nota.infNFe.dest.xNome).upper()
-            if nota.infNFe.dest.CPF is not None:
-                self.cnpj_cpf = str(nota.infNFe.dest.CPF)
+
+            cnpj = ''
+            cpf = ''
+            if int(nota.infNFe.ide.tpNF) == 0:
+                self.tpNF = 'Entrada'
+                self.razao_social = str(nota.infNFe.emit.xNome).upper()
+
+                if nota.infNFe.emit.CPF is not None:
+                    cpf = str(nota.infNFe.emit.CPF)
+                else:
+                    cnpj = str(nota.infNFe.emit.CNPJ)
+
             else:
-                cnpj = str(nota.infNFe.dest.CNPJ)
-                self.cnpj_cpf = "%s.%s.%s/%s-%s" % ( cnpj[0:2], cnpj[2:5], cnpj[5:8], cnpj[8:12], cnpj[12:14] )
+                self.tpNF = 'Saída'  #1
+                self.razao_social = str(nota.infNFe.dest.xNome).upper()
+
+                if nota.infNFe.dest.CPF is not None:
+                    cpf = str(nota.infNFe.dest.CPF)
+                else:
+                    cnpj = str(nota.infNFe.dest.CNPJ)
+
+            self.cnpj_cpf = cpf
+            if cnpj:
+                self.cnpj_cpf = "%s.%s.%s/%s-%s" % (cnpj[0:2], cnpj[2:5], cnpj[5:8], cnpj[8:12], cnpj[12:14])
 
             self.total = str(nota.infNFe.total.ICMSTot.vNF)
             self.chave = str(nota.infNFe.Id[3:])
-            #parser.export(nota, stream=self.xml)
 
         except Exception as e:
             logger.error(f'Erro ao ler arquivo xml ({xml}): {e}')
